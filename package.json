@@ -7,7 +7,6 @@
 		"start": "npx nodemon",
 		"build": "rimraf ./build && tsc"
 	},
-	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/kennarddh/music-player-cli.git"
@@ -19,6 +18,7 @@
 	},
 	"homepage": "https://github.com/kennarddh/music-player-cli#readme",
 	"devDependencies": {
+		"@types/inquirer": "^9.0.3",
 		"@types/node": "^18.11.18",
 		"nodemon": "^2.0.20",
 		"rimraf": "^3.0.2",
