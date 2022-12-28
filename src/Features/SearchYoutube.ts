@@ -11,7 +11,7 @@ const SearchYoutube = async () => {
 		name: 'search',
 	})
 
-	const searchResults = await ytsr(search, { pages: 1, limit: 100 })
+	const searchResults = await ytsr(search, { limit: 100 })
 
 	const results = searchResults.items.reduce<ISearchResult[]>((acc, item) => {
 		if (item.type !== 'video') return acc
@@ -33,7 +33,6 @@ const SearchYoutube = async () => {
 		type: 'checkbox',
 		message: 'Select video',
 		name: 'selected',
-		prefix: ' ',
 		choices: results.map(result => ({
 			name: `${result.title}, ${result.author}, ${result.duration}`,
 			value: result.id,
