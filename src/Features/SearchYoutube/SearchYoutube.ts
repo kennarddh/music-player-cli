@@ -1,8 +1,9 @@
 import inquirer from 'inquirer'
 
 import ytsr from 'ytsr'
+import ShowVideosCheckbox from '../../Utils/ShowVideosCheckbox.js'
 
-import { ISearchResult } from './Types'
+import { IVideo } from '../Types'
 
 const SearchYoutube = async () => {
 	const { search } = await inquirer.prompt({
@@ -13,7 +14,7 @@ const SearchYoutube = async () => {
 
 	const searchResults = await ytsr(search, { limit: 100 })
 
-	const results = searchResults.items.reduce<ISearchResult[]>((acc, item) => {
+	const results = searchResults.items.reduce<IVideo[]>((acc, item) => {
 		if (item.type !== 'video') return acc
 		if (item.isLive) return acc
 		if (item.isUpcoming) return acc
@@ -29,16 +30,7 @@ const SearchYoutube = async () => {
 		return acc
 	}, [])
 
-	const { selected } = await inquirer.prompt({
-		type: 'checkbox',
-		message: 'Select video',
-		name: 'selected',
-		choices: results.map(result => ({
-			name: `${result.title}, ${result.author}, ${result.duration}`,
-			value: result.id,
-		})),
-		loop: false,
-	})
+	const selected = await ShowVideosCheckbox(results)
 
 	console.log(selected)
 }

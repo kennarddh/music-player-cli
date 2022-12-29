@@ -1,4 +1,4 @@
-export interface ISearchResult {
+export interface IVideo {
 	title: string
 	id: string
 	author: string

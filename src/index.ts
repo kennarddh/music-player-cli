@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 
 // Features
-import SearchYoutube from './Features/SearchYoutube.js'
+import SearchYoutube from './Features/SearchYoutube/SearchYoutube.js'
 
 const { action } = await inquirer.prompt({
 	type: 'list',
