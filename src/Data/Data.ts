@@ -1,7 +1,7 @@
 import path from 'path'
 import { DirName } from '../Utils/Path.js'
 import FileSystem from './FileSystem.js'
-import { IData } from './Types.js'
+import { IData, ISound } from './Types.js'
 import fs from 'fs/promises'
 import { ValueOrFactory } from '../Utils/Types.js'
 
@@ -61,6 +61,32 @@ class Data {
 		await this.Update(dataOrFactory)
 
 		this.Flush()
+	}
+
+	static async NewPlaylist(name: string) {
+		await this.UpdateAndSave(prev => ({
+			...prev,
+			playlists: {
+				...prev.playlists,
+				[name]: { sounds: [] },
+			},
+		}))
+	}
+
+	static async NewSound(playlist: string, sound: ISound) {
+		await this.UpdateAndSave(prev => ({
+			...prev,
+			playlists: {
+				...prev.playlists,
+				[playlist]: {
+					...prev.playlists[playlist],
+					sounds: [
+						...prev.playlists[playlist].sounds,
+						sound
+					],
+				},
+			},
+		}))
 	}
 }
 
