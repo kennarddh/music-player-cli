@@ -13,9 +13,25 @@ class Data {
 
 	static #data: IData
 
+	static get data() {
+		return new Promise<IData>((resolve, reject) => {
+			if (!this.#data) {
+				FileSystem.Process(fs.readFile(this.#savePath))
+					.then(file => {
+						this.#data = JSON.parse(file.toString())
+
+						resolve(this.#data)
+					})
+					.catch(reject)
+			} else {
+				resolve(this.#data)
+			}
+		})
+	}
+
 	static Flush() {
 		FileSystem.Process(
-			fs.writeFile(this.#savePath, JSON.stringify(this.#data))
+			fs.writeFile(this.#savePath, JSON.stringify(this.data))
 		)
 	}
 
@@ -23,11 +39,11 @@ class Data {
 		this.#data = data
 	}
 
-	static Update(dataOrFactory: ValueOrFactory<IData>) {
+	static async Update(dataOrFactory: ValueOrFactory<IData>) {
 		let data: IData
 
 		if (typeof dataOrFactory === 'function') {
-			data = dataOrFactory(this.#data)
+			data = dataOrFactory(await this.data)
 		} else {
 			data = dataOrFactory
 		}
@@ -35,8 +51,8 @@ class Data {
 		this.Set(data)
 	}
 
-	static UpdateAndSave(dataOrFactory: ValueOrFactory<IData>) {
-		this.Update(dataOrFactory)
+	static async UpdateAndSave(dataOrFactory: ValueOrFactory<IData>) {
+		await this.Update(dataOrFactory)
 
 		this.Flush()
 	}
