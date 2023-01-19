@@ -16,13 +16,19 @@ class Data {
 	static get data() {
 		return new Promise<IData>((resolve, reject) => {
 			if (!this.#data) {
-				FileSystem.Process(fs.readFile(this.#savePath))
-					.then(file => {
-						this.#data = JSON.parse(file.toString())
+				fs.access(this.#savePath)
+					.then(() => {
+						FileSystem.Process(fs.readFile(this.#savePath))
+							.then(file => {
+								this.#data = JSON.parse(file.toString())
 
-						resolve(this.#data)
+								resolve(this.#data)
+							})
+							.catch(reject)
 					})
-					.catch(reject)
+					.catch(() => {
+						this.#data = { playlists: {} }
+					})
 			} else {
 				resolve(this.#data)
 			}
