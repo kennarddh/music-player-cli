@@ -6,11 +6,11 @@ import Data from './Data.js'
 import FileSystem from './FileSystem.js'
 
 class SoundsData {
-	static #soundsSavePath = path.join(Data.saveDirPath, './Sounds/')
+	static soundsSavePath = path.join(Data.saveDirPath, './Sounds/')
 
 	static async CreateDirectory() {
 		await FileSystem.Process(
-			fs.mkdir(this.#soundsSavePath, { recursive: true })
+			fs.mkdir(this.soundsSavePath, { recursive: true })
 		)
 	}
 
@@ -18,7 +18,7 @@ class SoundsData {
 		await this.CreateDirectory()
 
 		const writeStream = createWriteStream(
-			path.join(this.#soundsSavePath, `${id}.mpeg`)
+			path.join(this.soundsSavePath, `${id}.mpeg`)
 		)
 
 		stream.pipe(writeStream)
