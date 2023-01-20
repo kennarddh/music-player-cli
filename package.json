@@ -27,6 +27,7 @@
 	},
 	"dependencies": {
 		"inquirer": "^9.1.4",
+		"inquirer-interrupted-prompt": "^2.0.1",
 		"ora": "^6.1.2",
 		"ytdl-core": "^4.11.2",
 		"ytsr": "^3.8.0"
