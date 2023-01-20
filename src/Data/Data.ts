@@ -5,6 +5,7 @@ import { IData, ISound } from './Types.js'
 import fs from 'fs/promises'
 import { ValueOrFactory } from '../Utils/Types.js'
 import { randomUUID } from 'crypto'
+import Fallback from '../Utils/Fallback.js'
 
 class Data {
 	static #savePath = path.join(
@@ -28,7 +29,7 @@ class Data {
 							.catch(reject)
 					})
 					.catch(() => {
-						this.#data = { playlists: {} }
+						this.#data = {}
 
 						resolve(this.#data)
 					})
@@ -82,14 +83,17 @@ class Data {
 		}))
 	}
 
-	static async NewSound(playlist: string, sound: ISound) {
+	static async NewSound(playlistId: string, sound: ISound) {
 		await this.UpdateAndSave(prev => ({
 			...prev,
 			playlists: {
 				...prev.playlists,
-				[playlist]: {
-					...prev.playlists[playlist],
-					sounds: [...prev.playlists[playlist].sounds, sound],
+				[playlistId]: {
+					...Fallback(prev?.playlists?.[playlistId], {}),
+					sounds: [
+						...Fallback(prev?.playlists?.[playlistId]?.sounds, []),
+						sound,
+					],
 				},
 			},
 		}))

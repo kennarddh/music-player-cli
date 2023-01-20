@@ -1,3 +1,5 @@
+import { RecursivePartial } from '../Utils/Types'
+
 export interface ISound {
 	id: string
 	title: string
@@ -8,11 +10,13 @@ export interface ISound {
 
 export interface IPlaylist {
 	sounds: ISound[]
-	name:string
+	name: string
 }
 
 export type IPlaylists = Record<string, IPlaylist>
 
-export interface IData {
-	playlists: IPlaylists
+export interface IRequiredData {
+	playlists?: IPlaylists
 }
+
+export type IData = RecursivePartial<IRequiredData>
