@@ -98,6 +98,27 @@ class Data {
 			},
 		}))
 	}
+
+	static async AllPlaylistsIdAndName(): Promise<Record<string, string>> {
+		const data = await this.data
+
+		if (!data?.playlists) return {}
+
+		return Object.entries(data.playlists).reduce<Record<string, string>>(
+			(acc, [id, playlist]) => {
+				acc[id] = playlist?.name ?? 'unknown'
+				return acc
+			},
+			{}
+		)
+	}
+
+	static async SetSelectedPlaylist(id: string): Promise<void> {
+		this.UpdateAndSave(prev => ({
+			...prev,
+			selectedPlaylist: id,
+		}))
+	}
 }
 
 export default Data

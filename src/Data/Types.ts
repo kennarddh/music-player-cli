@@ -16,7 +16,8 @@ export interface IPlaylist {
 export type IPlaylists = Record<string, IPlaylist>
 
 export interface IRequiredData {
-	playlists?: IPlaylists
+	playlists: IPlaylists
+	selectedPlaylist: string
 }
 
 export type IData = RecursivePartial<IRequiredData>
