@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 
 import { IVideo } from '../Features/Types'
 
-const ShowVideosCheckbox = async (raw: IVideo[]) => {
+const ShowVideosCheckbox = async (raw: IVideo[]): Promise<string[]> => {
 	const { selected } = await inquirer.prompt({
 		type: 'checkbox',
 		message: 'Select video',

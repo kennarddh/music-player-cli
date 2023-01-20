@@ -8,19 +8,18 @@ import { randomUUID } from 'crypto'
 import Fallback from '../Utils/Fallback.js'
 
 class Data {
-	static #savePath = path.join(
-		DirName(import.meta.url),
-		'../../data/saves.json'
-	)
+	static saveDirPath = path.join(DirName(import.meta.url), '../../data/')
+
+	static savePath = path.join(this.saveDirPath, './saves.json')
 
 	static #data: IData
 
 	static get data() {
 		return new Promise<IData>((resolve, reject) => {
 			if (!this.#data) {
-				fs.access(this.#savePath)
+				fs.access(this.savePath)
 					.then(() => {
-						FileSystem.Process(fs.readFile(this.#savePath))
+						FileSystem.Process(fs.readFile(this.savePath))
 							.then(file => {
 								this.#data = JSON.parse(file.toString())
 
@@ -41,11 +40,11 @@ class Data {
 
 	static async Flush() {
 		await FileSystem.Process(
-			fs.mkdir(path.parse(this.#savePath).dir, { recursive: true })
+			fs.mkdir(path.parse(this.savePath).dir, { recursive: true })
 		)
 
 		await FileSystem.Process(
-			fs.writeFile(this.#savePath, JSON.stringify(await this.data))
+			fs.writeFile(this.savePath, JSON.stringify(await this.data))
 		)
 	}
 

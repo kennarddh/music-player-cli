@@ -1,7 +1,9 @@
+import { randomUUID } from 'crypto'
 import inquirer from 'inquirer'
 
 import ytsr from 'ytsr'
 import ShowVideosCheckbox from '../../Utils/ShowVideosCheckbox.js'
+import AddFromYoutube from '../AddFromYoutube.js'
 
 import { IVideo } from '../Types'
 
@@ -12,7 +14,15 @@ const SearchYoutube = async () => {
 		name: 'search',
 	})
 
-	const searchResults = await ytsr(search, { limit: 100 })
+	// Disable ytsr error log
+	const prevConsoleError = console.error
+	console.error = () => {}
+	const searchResults = (await ytsr(search, { limit: 100 ,}).catch(() => {
+		// Error parsing shorts
+		// https://github.com/TimeForANinja/node-ytsr/issues/174
+		// https://github.com/TimeForANinja/node-ytsr/pull/178
+	})) as ytsr.Result
+	console.error = () => prevConsoleError
 
 	const results = searchResults.items.reduce<IVideo[]>((acc, item) => {
 		if (item.type !== 'video') return acc
@@ -32,7 +42,13 @@ const SearchYoutube = async () => {
 
 	const selected = await ShowVideosCheckbox(results)
 
-	console.log(selected)
+	const id = randomUUID()
+
+	await AddFromYoutube(
+		id,
+		selected[0],
+		results.find(({ id: iterId }) => iterId === selected[0])?.title as string
+	)
 }
 
 export default SearchYoutube
