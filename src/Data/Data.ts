@@ -28,6 +28,8 @@ class Data {
 					})
 					.catch(() => {
 						this.#data = { playlists: {} }
+
+						resolve(this.#data)
 					})
 			} else {
 				resolve(this.#data)
@@ -35,8 +37,12 @@ class Data {
 		})
 	}
 
-	static Flush() {
-		FileSystem.Process(
+	static async Flush() {
+		await FileSystem.Process(
+			fs.mkdir(path.parse(this.#savePath).dir, { recursive: true })
+		)
+
+		await FileSystem.Process(
 			fs.writeFile(this.#savePath, JSON.stringify(this.data))
 		)
 	}
@@ -60,7 +66,7 @@ class Data {
 	static async UpdateAndSave(dataOrFactory: ValueOrFactory<IData>) {
 		await this.Update(dataOrFactory)
 
-		this.Flush()
+		await this.Flush()
 	}
 
 	static async NewPlaylist(name: string) {
@@ -80,10 +86,7 @@ class Data {
 				...prev.playlists,
 				[playlist]: {
 					...prev.playlists[playlist],
-					sounds: [
-						...prev.playlists[playlist].sounds,
-						sound
-					],
+					sounds: [...prev.playlists[playlist].sounds, sound],
 				},
 			},
 		}))
