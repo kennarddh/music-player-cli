@@ -83,7 +83,11 @@ class Data {
 		}))
 	}
 
-	static async NewSound(playlistId: string, sound: ISound) {
+	static async NewSound(sound: ISound) {
+		const playlistId = (await this.data).selectedPlaylist
+
+		if (!playlistId) return
+
 		await this.UpdateAndSave(prev => ({
 			...prev,
 			playlists: {
