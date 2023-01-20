@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 
 // Features
-import SearchYoutube from './Features/SearchYoutube/SearchYoutube.js'
+import SearchYoutube from './Features/Youtube/SearchYoutube/SearchYoutube.js'
 import NewPlaylist from './Features/NewPlaylist/NewPlaylist.js'
 import SelectPlaylist from './Features/SelectPlaylist/SelectPlaylist.js'
 

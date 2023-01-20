@@ -1,10 +1,10 @@
 import ora from 'ora'
 import ytdl from 'ytdl-core'
-import SoundsData from '../Data/SoundsData.js'
-import YoutubeUrlFromId from '../Utils/YoutubeUrlFromId.js'
+import SoundsData from '../../Data/SoundsData.js'
+import YoutubeUrlFromId from '../../Utils/Youtube/YoutubeUrlFromId.js'
 
 const AddFromYoutube = (id: string, youtubeId: string, title: string) =>
-	new Promise<void>((resolve,reject) => {
+	new Promise<void>((resolve, reject) => {
 		const url = YoutubeUrlFromId(youtubeId)
 
 		const audio = ytdl(url, { quality: 'highestaudio' })

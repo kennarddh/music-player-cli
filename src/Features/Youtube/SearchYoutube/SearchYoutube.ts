@@ -2,13 +2,13 @@ import { randomUUID } from 'crypto'
 import inquirer from 'inquirer'
 
 import ytsr from 'ytsr'
-import Data from '../../Data/Data.js'
-import ParseYoutubeDuration from '../../Utils/ParseYoutubeDuration.js'
-import ShowVideosCheckbox from '../../Utils/ShowVideosCheckbox.js'
-import Wait from '../../Utils/Wait.js'
+import Data from '../../../Data/Data.js'
+import ParseYoutubeDuration from '../../../Utils/Youtube/ParseYoutubeDuration.js'
+import ShowVideosCheckbox from '../../../Utils/ShowVideosCheckbox.js'
+import Wait from '../../../Utils/Wait.js'
 import AddFromYoutube from '../AddFromYoutube.js'
 
-import { IVideo } from '../Types'
+import { IVideo } from '../../Types'
 
 const SearchYoutube = async () => {
 	if (!(await Data.CheckHaveSelectedPlaylist())) return
