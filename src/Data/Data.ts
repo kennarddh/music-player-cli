@@ -1,7 +1,7 @@
 import path from 'path'
 import { DirName } from '../Utils/Path.js'
 import FileSystem from './FileSystem.js'
-import { IData, ISound } from './Types.js'
+import { IData, IPlaylist, ISound } from './Types.js'
 import fs from 'fs/promises'
 import { ValueOrFactory } from '../Utils/Types.js'
 import { randomUUID } from 'crypto'
@@ -131,6 +131,14 @@ class Data {
 		}
 
 		return haveSelected
+	}
+
+	static async GetCurrentPlaylistSounds(): Promise<ISound[]> {
+		if (!(await this.CheckHaveSelectedPlaylist())) return []
+
+		const selectedId = (await this.data).selectedPlaylist as string
+
+		return ((await this.data)?.playlists?.[selectedId]?.sounds ?? []) as ISound[]
 	}
 }
 

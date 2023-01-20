@@ -1,4 +1,4 @@
-const ParseYoutubeDuration = (duration: string): number => {
+const DurationToSeconds = (duration: string): number => {
 	const splited = duration.split(':')
 
 	if (splited.length === 1) {
@@ -16,4 +16,4 @@ const ParseYoutubeDuration = (duration: string): number => {
 	return result
 }
 
-export default ParseYoutubeDuration
+export default DurationToSeconds

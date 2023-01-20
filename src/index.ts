@@ -4,6 +4,7 @@ import inquirer from 'inquirer'
 import SearchYoutube from './Features/Youtube/SearchYoutube/SearchYoutube.js'
 import NewPlaylist from './Features/NewPlaylist/NewPlaylist.js'
 import SelectPlaylist from './Features/SelectPlaylist/SelectPlaylist.js'
+import ViewPlaylist from './Features/ViewPlaylist/ViewPlaylist.js'
 
 while (true) {
 	const { action } = await inquirer.prompt({
@@ -14,6 +15,7 @@ while (true) {
 			{ value: 'searchYoutube', name: 'Search on Youtube' },
 			{ value: 'newPlaylist', name: 'Create New Playlist' },
 			{ value: 'selectPlaylist', name: 'Select a Playlist' },
+			{ value: 'viewPlaylist', name: 'View a Playlist' },
 		],
 	})
 
@@ -30,6 +32,11 @@ while (true) {
 		}
 		case 'selectPlaylist': {
 			await SelectPlaylist()
+
+			break
+		}
+		case 'viewPlaylist': {
+			await ViewPlaylist()
 
 			break
 		}

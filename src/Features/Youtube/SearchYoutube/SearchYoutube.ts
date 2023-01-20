@@ -3,7 +3,7 @@ import inquirer from 'inquirer'
 
 import ytsr from 'ytsr'
 import Data from '../../../Data/Data.js'
-import ParseYoutubeDuration from '../../../Utils/Youtube/ParseYoutubeDuration.js'
+import DurationToSeconds from '../../../Utils/DurationToSeconds.js'
 import ShowVideosCheckbox from '../../../Utils/ShowVideosCheckbox.js'
 import Wait from '../../../Utils/Wait.js'
 import AddFromYoutube from '../AddFromYoutube.js'
@@ -58,7 +58,7 @@ const SearchYoutube = async () => {
 
 		await Data.NewSound({
 			author: videoData.author,
-			duration: ParseYoutubeDuration(videoData.duration),
+			duration: DurationToSeconds(videoData.duration),
 			id,
 			title: videoData.title,
 			addedAt: new Date().getTime(),
