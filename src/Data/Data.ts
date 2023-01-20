@@ -43,7 +43,7 @@ class Data {
 		)
 
 		await FileSystem.Process(
-			fs.writeFile(this.#savePath, JSON.stringify(this.data))
+			fs.writeFile(this.#savePath, JSON.stringify(await this.data))
 		)
 	}
 
