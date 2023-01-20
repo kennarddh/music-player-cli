@@ -14,7 +14,7 @@ class SoundsData {
 		)
 	}
 
-	static async Download(id: string, stream: Stream) {
+	static async Add(id: string, stream: Stream) {
 		await this.CreateDirectory()
 
 		const writeStream = createWriteStream(

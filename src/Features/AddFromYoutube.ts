@@ -4,7 +4,7 @@ import SoundsData from '../Data/SoundsData.js'
 import YoutubeUrlFromId from '../Utils/YoutubeUrlFromId.js'
 
 const AddFromYoutube = (id: string, youtubeId: string, title: string) =>
-	new Promise<void>(resolve => {
+	new Promise<void>((resolve,reject) => {
 		const url = YoutubeUrlFromId(youtubeId)
 
 		const audio = ytdl(url, { quality: 'highestaudio' })
@@ -20,7 +20,7 @@ const AddFromYoutube = (id: string, youtubeId: string, title: string) =>
 			).toFixed(2)}%`
 		})
 
-		SoundsData.Download(id, audio).then(writeStream => {
+		SoundsData.Add(id, audio).then(writeStream => {
 			writeStream.once('finish', () => {
 				loader.succeed(`Downloaded ${title}`)
 
@@ -30,7 +30,7 @@ const AddFromYoutube = (id: string, youtubeId: string, title: string) =>
 			writeStream.once('error', () => {
 				loader.fail(`Error downloading ${title}`)
 
-				resolve()
+				reject()
 			})
 		})
 	})

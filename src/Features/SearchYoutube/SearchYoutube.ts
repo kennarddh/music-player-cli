@@ -2,6 +2,8 @@ import { randomUUID } from 'crypto'
 import inquirer from 'inquirer'
 
 import ytsr from 'ytsr'
+import Data from '../../Data/Data.js'
+import ParseYoutubeDuration from '../../Utils/ParseYoutubeDuration.js'
 import ShowVideosCheckbox from '../../Utils/ShowVideosCheckbox.js'
 import Wait from '../../Utils/Wait.js'
 import AddFromYoutube from '../AddFromYoutube.js'
@@ -9,6 +11,8 @@ import AddFromYoutube from '../AddFromYoutube.js'
 import { IVideo } from '../Types'
 
 const SearchYoutube = async () => {
+	if (!(await Data.CheckHaveSelectedPlaylist())) return
+
 	const { search } = await inquirer.prompt({
 		type: 'input',
 		message: 'Search keyword?',
@@ -46,12 +50,19 @@ const SearchYoutube = async () => {
 	for (const videoId of selected) {
 		const id = randomUUID()
 
-		await AddFromYoutube(
+		const videoData = results.find(
+			({ id: iterId }) => iterId === videoId
+		) as IVideo
+
+		await AddFromYoutube(id, videoId, videoData.title as string)
+
+		await Data.NewSound({
+			author: videoData.author,
+			duration: ParseYoutubeDuration(videoData.duration),
 			id,
-			videoId,
-			results.find(({ id: iterId }) => iterId === videoId)
-				?.title as string
-		)
+			title: videoData.title,
+			addedAt: new Date().getTime(),
+		})
 
 		await Wait(2000)
 	}

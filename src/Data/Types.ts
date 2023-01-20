@@ -3,7 +3,7 @@ import { RecursivePartial } from '../Utils/Types'
 export interface ISound {
 	id: string
 	title: string
-	uploadedAt: string
+	addedAt: number
 	author: string
 	duration: number
 }

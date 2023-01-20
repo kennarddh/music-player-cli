@@ -122,6 +122,16 @@ class Data {
 			selectedPlaylist: id,
 		}))
 	}
+
+	static async CheckHaveSelectedPlaylist(): Promise<boolean> {
+		const haveSelected = !!(await this.data)?.selectedPlaylist
+
+		if (!haveSelected) {
+			console.log('No playlist selected')
+		}
+
+		return haveSelected
+	}
 }
 
 export default Data
