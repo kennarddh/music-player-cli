@@ -9,18 +9,29 @@ const AddFromYoutube = (id: string, youtubeId: string, title: string) =>
 
 		const audio = ytdl(url, { quality: 'highestaudio' })
 
-		const loader = ora(`Downloading ${title}, 0%`)
+		const loader = ora(`Downloading ${title}, 0.00%`)
 
 		loader.start()
 
 		audio.on('progress', (_, downloaded, total) => {
-			loader.text = `Downloading ${title}, ${(downloaded / total) * 100}%`
+			loader.text = `Downloading ${title}, ${(
+				(downloaded / total) *
+				100
+			).toFixed(2)}%`
 		})
 
-		SoundsData.Download(id, audio).then(() => {
-			loader.succeed(`Downloaded ${title}`)
+		SoundsData.Download(id, audio).then(writeStream => {
+			writeStream.once('finish', () => {
+				loader.succeed(`Downloaded ${title}`)
 
-			resolve()
+				resolve()
+			})
+
+			writeStream.once('error', () => {
+				loader.fail(`Error downloading ${title}`)
+
+				resolve()
+			})
 		})
 	})
 
