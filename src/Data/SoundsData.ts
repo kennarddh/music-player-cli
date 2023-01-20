@@ -1,5 +1,5 @@
 import { createWriteStream } from 'fs'
-import path, { resolve } from 'path'
+import path from 'path'
 import { Stream } from 'stream'
 import fs from 'fs/promises'
 import Data from './Data.js'
