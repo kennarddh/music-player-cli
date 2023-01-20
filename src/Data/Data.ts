@@ -4,6 +4,7 @@ import FileSystem from './FileSystem.js'
 import { IData, ISound } from './Types.js'
 import fs from 'fs/promises'
 import { ValueOrFactory } from '../Utils/Types.js'
+import { randomUUID } from 'crypto'
 
 class Data {
 	static #savePath = path.join(
@@ -70,11 +71,13 @@ class Data {
 	}
 
 	static async NewPlaylist(name: string) {
+		const id = randomUUID()
+
 		await this.UpdateAndSave(prev => ({
 			...prev,
 			playlists: {
 				...prev.playlists,
-				[name]: { sounds: [] },
+				[id]: { name, sounds: [] },
 			},
 		}))
 	}

@@ -6,7 +6,12 @@ export interface ISound {
 	duration: number
 }
 
-export type IPlaylists = Record<string, { sounds: ISound[] }>
+export interface IPlaylist {
+	sounds: ISound[]
+	name:string
+}
+
+export type IPlaylists = Record<string, IPlaylist>
 
 export interface IData {
 	playlists: IPlaylists
