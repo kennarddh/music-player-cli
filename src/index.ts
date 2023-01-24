@@ -7,6 +7,7 @@ import SelectPlaylist from './Features/SelectPlaylist/SelectPlaylist.js'
 import ViewPlaylist from './Features/ViewPlaylist/ViewPlaylist.js'
 import DeleteSounds from './Features/DeleteSounds/DeleteSounds.js'
 import ImportFromYoutubePlaylist from './Features/Youtube/ImportFromYoutubePlaylist/ImportFromYoutubePlaylist.js'
+import PlayPlaylist from './Features/PlayPlaylist/PlayPlaylist.js'
 
 while (true) {
 	const { action } = await inquirer.prompt({
@@ -20,6 +21,7 @@ while (true) {
 			{ value: 'viewPlaylist', name: 'View a Playlist' },
 			{ value: 'deleteSounds', name: 'Delete Sounds From a Playlist' },
 			{ value: 'importFromYoutubePLaylist', name: 'Import From Youtube Playlist' },
+			{ value: 'playPlaylist', name: 'Play a Playlist' },
 		],
 	})
 
@@ -51,6 +53,11 @@ while (true) {
 		}
 		case 'importFromYoutubePLaylist': {
 			await ImportFromYoutubePlaylist()
+
+			break
+		}
+		case 'playPlaylist': {
+			await PlayPlaylist()
 
 			break
 		}

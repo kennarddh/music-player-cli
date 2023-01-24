@@ -31,6 +31,10 @@ class SoundsData {
 
 		await fs.rm(path.join(this.soundsSavePath, `${id}.mpeg`))
 	}
+
+	static GetSoundPathFromId(id: string) {
+		return path.join(this.soundsSavePath, `${id}.mpeg`)
+	}
 }
 
 export default SoundsData
