@@ -25,6 +25,12 @@ class SoundsData {
 
 		return writeStream
 	}
+
+	static async Delete(id: string) {
+		await this.CreateDirectory()
+
+		await fs.rm(path.join(this.soundsSavePath, `${id}.mpeg`))
+	}
 }
 
 export default SoundsData

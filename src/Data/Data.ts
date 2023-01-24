@@ -102,6 +102,28 @@ class Data {
 		}))
 	}
 
+	static async DeleteSound(soundId: string) {
+		const playlistId = (await this.data).selectedPlaylist
+
+		if (!playlistId) return
+
+		await this.UpdateAndSave(prev => ({
+			...prev,
+			playlists: {
+				...prev.playlists,
+				[playlistId]: {
+					...Fallback(prev?.playlists?.[playlistId], {}),
+					sounds: [
+						...Fallback(
+							prev?.playlists?.[playlistId]?.sounds,
+							[]
+						).filter(sound => sound?.id !== soundId),
+					],
+				},
+			},
+		}))
+	}
+
 	static async AllPlaylistsIdAndName(): Promise<Record<string, string>> {
 		const data = await this.data
 
@@ -138,7 +160,8 @@ class Data {
 
 		const selectedId = (await this.data).selectedPlaylist as string
 
-		return ((await this.data)?.playlists?.[selectedId]?.sounds ?? []) as ISound[]
+		return ((await this.data)?.playlists?.[selectedId]?.sounds ??
+			[]) as ISound[]
 	}
 }
 
