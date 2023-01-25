@@ -13,6 +13,7 @@ import PlayPlaylist from './Features/PlayPlaylist/PlayPlaylist.js'
 import ChangeVolume from './Features/Controls/ChangeVolume.js'
 import Pause from './Features/Controls/Pause.js'
 import Play from './Features/Controls/Play.js'
+import Stop from './Features/Controls/Stop.js'
 
 while (true) {
 	const { action } = await inquirer.prompt({
@@ -35,6 +36,7 @@ while (true) {
 			{ value: 'changeVolume', name: 'Change Volume' },
 			{ value: 'pause', name: 'Pause' },
 			{ value: 'play', name: 'Play' },
+			{ value: 'stop', name: 'Stop' },
 		],
 		loop: false,
 	})
@@ -93,6 +95,11 @@ while (true) {
 		}
 		case 'play': {
 			Play()
+
+			break
+		}
+		case 'stop': {
+			Stop()
 
 			break
 		}
