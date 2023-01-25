@@ -1,15 +1,18 @@
 import Audic from 'audic'
 
 import Data from '../../Data/Data.js'
+import SoundEvent, { SoundEventStatus } from '../../Data/SoundEvent.js'
 import SoundsData from '../../Data/SoundsData.js'
 
 const PlayPlaylist = async () => {
 	const sounds = await Data.GetCurrentPlaylistSounds()
 
-	for (const sound of sounds) {
-		const path = SoundsData.GetSoundPathFromId(sound.id)
+	let stopped: boolean = false
 
-		console.log(sound)
+	for (const sound of sounds) {
+		if (stopped) return
+
+		const path = SoundsData.GetSoundPathFromId(sound.id)
 
 		const audic = new Audic(path)
 
@@ -17,18 +20,27 @@ const PlayPlaylist = async () => {
 
 		await audic.play()
 
-		await new Promise<void>(resolve => {
-			audic.addEventListener('timeupdate', () => {
-				if (audic.currentTime === audic.duration - 1) {
-					console.log('end')
-					resolve()
-				}
-			})
+		audic.addEventListener('timeupdate', () => {
+			if (audic.currentTime === audic.duration - 1) {
+				audic.destroy()
+			}
 		})
 
-		console.log('end destroy')
+		SoundEvent.event.addListener('volumeChange', volume => {
+			audic.volume = volume
+		})
 
-		audic.destroy()
+		SoundEvent.event.addListener('statusChange', status => {
+			if (status === SoundEventStatus.Playing) {
+				audic.play()
+			} else if (status === SoundEventStatus.Paused) {
+				audic.pause()
+			} else if (status === SoundEventStatus.Stopped) {
+				audic.destroy()
+
+				stopped = true
+			}
+		})
 	}
 }
 
