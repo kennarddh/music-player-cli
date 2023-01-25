@@ -14,6 +14,9 @@ import ChangeVolume from './Features/Controls/ChangeVolume.js'
 import Pause from './Features/Controls/Pause.js'
 import Play from './Features/Controls/Play.js'
 import Stop from './Features/Controls/Stop.js'
+import KeyboardEvents from './Features/Controls/KeyboardEvents.js'
+
+KeyboardEvents()
 
 while (true) {
 	const { action } = await inquirer.prompt({
@@ -23,7 +26,7 @@ while (true) {
 		choices: [
 			{ value: 'searchYoutube', name: 'Search on Youtube' },
 			{
-				value: 'importFromYoutubePLaylist',
+				value: 'importFromYoutubePlaylist',
 				name: 'Import From Youtube Playlist',
 			},
 			new inquirer.Separator(),
@@ -67,7 +70,7 @@ while (true) {
 
 			break
 		}
-		case 'importFromYoutubePLaylist': {
+		case 'importFromYoutubePlaylist': {
 			await ImportFromYoutubePlaylist()
 
 			break

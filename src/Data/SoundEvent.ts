@@ -38,6 +38,7 @@ class SoundEvent {
 	static event: Event = new Event()
 	static status: SoundEventStatus = SoundEventStatus.Stopped
 	static volume: number = 1
+	static isMuted = false
 
 	static SetVolume(volume: number) {
 		this.volume = volume
@@ -49,6 +50,16 @@ class SoundEvent {
 		this.status = status
 
 		this.event.emit('statusChange', status)
+	}
+
+	static ToggleMuted() {
+		if (this.isMuted) {
+			this.isMuted = false
+			this.SetVolume(0)
+		} else {
+			this.isMuted = true
+			this.SetVolume(this.volume)
+		}
 	}
 }
 
