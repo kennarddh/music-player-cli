@@ -15,6 +15,11 @@ declare interface Event {
 		listener: EventEvents[U]
 	): this
 
+	removeListener<U extends keyof EventEvents>(
+		event: U,
+		listener: EventEvents[U]
+	): this
+
 	emit<U extends keyof EventEvents>(
 		event: U,
 		...args: Parameters<EventEvents[U]>
@@ -29,7 +34,7 @@ export enum SoundEventStatus {
 	Stopped,
 }
 
-class SoundEvent extends EventEmitter {
+class SoundEvent {
 	static event: Event = new Event()
 	static status: SoundEventStatus = SoundEventStatus.Stopped
 	static volume: number = 1

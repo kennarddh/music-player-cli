@@ -4,44 +4,53 @@ import Data from '../../Data/Data.js'
 import SoundEvent, { SoundEventStatus } from '../../Data/SoundEvent.js'
 import SoundsData from '../../Data/SoundsData.js'
 
-const PlayPlaylist = async () => {
+const PlayPlaylist = async (index = 0) => {
 	const sounds = await Data.GetCurrentPlaylistSounds()
 
-	let stopped: boolean = false
+	const sound = sounds[index]
+	const path = SoundsData.GetSoundPathFromId(sound.id)
 
-	for (const sound of sounds) {
-		if (stopped) return
+	const audic = new Audic(path)
 
-		const path = SoundsData.GetSoundPathFromId(sound.id)
+	audic.loop = false
+	audic.volume = SoundEvent.volume
 
-		const audic = new Audic(path)
+	await audic.play()
 
-		audic.loop = false
+	SoundEvent.status = SoundEventStatus.Playing
 
-		await audic.play()
+	audic.addEventListener('timeupdate', () => {
+		if (audic.currentTime === audic.duration - 1) {
+			SoundEvent.event.removeListener('volumeChange', OnVolumeChange)
+			SoundEvent.event.removeListener('statusChange', OnStatusChange)
 
-		audic.addEventListener('timeupdate', () => {
-			if (audic.currentTime === audic.duration - 1) {
-				audic.destroy()
+			audic.destroy()
+
+			if (sounds.length - 1 !== index) {
+				PlayPlaylist(index + 1)
 			}
-		})
+		}
+	})
 
-		SoundEvent.event.addListener('volumeChange', volume => {
-			audic.volume = volume
-		})
-
-		SoundEvent.event.addListener('statusChange', status => {
-			if (status === SoundEventStatus.Playing) {
-				audic.play()
-			} else if (status === SoundEventStatus.Paused) {
-				audic.pause()
-			} else if (status === SoundEventStatus.Stopped) {
-				audic.destroy()
-
-				stopped = true
-			}
-		})
+	const OnVolumeChange = (volume: number) => {
+		audic.volume = volume
 	}
+
+	const OnStatusChange = (status: SoundEventStatus) => {
+		if (status === SoundEventStatus.Playing) {
+			audic.play()
+		} else if (status === SoundEventStatus.Paused) {
+			audic.pause()
+		} else if (status === SoundEventStatus.Stopped) {
+			audic.destroy()
+
+			SoundEvent.event.removeListener('volumeChange', OnVolumeChange)
+			SoundEvent.event.removeListener('statusChange', OnStatusChange)
+		}
+	}
+
+	SoundEvent.event.addListener('volumeChange', OnVolumeChange)
+	SoundEvent.event.addListener('statusChange', OnStatusChange)
 }
 
 export default PlayPlaylist
