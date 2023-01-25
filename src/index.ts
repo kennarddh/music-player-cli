@@ -9,6 +9,7 @@ import DeleteSounds from './Features/DeleteSounds/DeleteSounds.js'
 import ImportFromYoutubePlaylist from './Features/Youtube/ImportFromYoutubePlaylist/ImportFromYoutubePlaylist.js'
 import PlayPlaylist from './Features/PlayPlaylist/PlayPlaylist.js'
 import ChangeVolume from './Features/Controls/ChangeVolume.js'
+import Pause from './Features/Controls/Pause.js'
 
 while (true) {
 	const { action } = await inquirer.prompt({
@@ -29,6 +30,7 @@ while (true) {
 			{ value: 'playPlaylist', name: 'Play a Playlist' },
 			new inquirer.Separator(),
 			{ value: 'changeVolume', name: 'Change Volume' },
+			{ value: 'pause', name: 'Pause' },
 		],
 		loop: false,
 	})
@@ -71,6 +73,11 @@ while (true) {
 		}
 		case 'changeVolume': {
 			await ChangeVolume()
+
+			break
+		}
+		case 'pause': {
+			Pause()
 
 			break
 		}
