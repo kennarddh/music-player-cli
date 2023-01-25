@@ -1,5 +1,7 @@
 import inquirer from 'inquirer'
 
+import SoundEvent, { SoundEventStatus } from './Data/SoundEvent.js'
+
 // Features
 import SearchYoutube from './Features/Youtube/SearchYoutube/SearchYoutube.js'
 import NewPlaylist from './Features/NewPlaylist/NewPlaylist.js'
@@ -10,6 +12,7 @@ import ImportFromYoutubePlaylist from './Features/Youtube/ImportFromYoutubePlayl
 import PlayPlaylist from './Features/PlayPlaylist/PlayPlaylist.js'
 import ChangeVolume from './Features/Controls/ChangeVolume.js'
 import Pause from './Features/Controls/Pause.js'
+import Play from './Features/Controls/Play.js'
 
 while (true) {
 	const { action } = await inquirer.prompt({
@@ -31,6 +34,7 @@ while (true) {
 			new inquirer.Separator(),
 			{ value: 'changeVolume', name: 'Change Volume' },
 			{ value: 'pause', name: 'Pause' },
+			{ value: 'play', name: 'Play' },
 		],
 		loop: false,
 	})
@@ -67,6 +71,12 @@ while (true) {
 			break
 		}
 		case 'playPlaylist': {
+			if (SoundEvent.status !== SoundEventStatus.Stopped) {
+				console.log('Sound is not stopped')
+
+				break
+			}
+
 			await PlayPlaylist()
 
 			break
@@ -78,6 +88,11 @@ while (true) {
 		}
 		case 'pause': {
 			Pause()
+
+			break
+		}
+		case 'play': {
+			Play()
 
 			break
 		}
