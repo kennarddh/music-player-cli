@@ -43,6 +43,8 @@ class SoundEvent {
 	static SetVolume(volume: number) {
 		this.volume = volume
 
+		if (this.isMuted) return
+
 		this.event.emit('volumeChange', volume)
 	}
 
@@ -55,10 +57,12 @@ class SoundEvent {
 	static ToggleMuted() {
 		if (this.isMuted) {
 			this.isMuted = false
-			this.SetVolume(0)
+
+			this.SetVolume(this.volume)
 		} else {
 			this.isMuted = true
-			this.SetVolume(this.volume)
+
+			this.event.emit('volumeChange', 0)
 		}
 	}
 }
