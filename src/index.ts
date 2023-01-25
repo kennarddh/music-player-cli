@@ -16,11 +16,15 @@ while (true) {
 		name: 'action',
 		choices: [
 			{ value: 'searchYoutube', name: 'Search on Youtube' },
+			{
+				value: 'importFromYoutubePLaylist',
+				name: 'Import From Youtube Playlist',
+			},
+			new inquirer.Separator(),
 			{ value: 'newPlaylist', name: 'Create New Playlist' },
 			{ value: 'selectPlaylist', name: 'Select a Playlist' },
 			{ value: 'viewPlaylist', name: 'View a Playlist' },
 			{ value: 'deleteSounds', name: 'Delete Sounds From a Playlist' },
-			{ value: 'importFromYoutubePLaylist', name: 'Import From Youtube Playlist' },
 			{ value: 'playPlaylist', name: 'Play a Playlist' },
 		],
 	})
