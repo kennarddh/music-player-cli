@@ -1,6 +1,7 @@
 import inquirer from 'inquirer'
 
-import SoundEvent, { SoundEventStatus } from '../../Data/SoundEvent.js'
+import SoundEvent from '../../Data/SoundEvent.js'
+import Clamp from '../../Utils/Clamp.js'
 
 const ChangeVolume = async () => {
 	const { volume } = await inquirer.prompt([
@@ -17,7 +18,7 @@ const ChangeVolume = async () => {
 		},
 	])
 
-	SoundEvent.SetVolume(volume / 100)
+	SoundEvent.SetVolume(Clamp(0, volume / 100, 1))
 }
 
 export default ChangeVolume
