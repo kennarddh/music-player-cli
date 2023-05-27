@@ -15,20 +15,37 @@ const PlayPlaylist = async (index = 0) => {
 	audic.loop = false
 	audic.volume = SoundEvent.volume
 
+	// Fix to the library
+	// https://github.com/Richienb/audic/issues/19#issuecomment-1547189493
+	void (async () => {
+		const vlc = await (audic as any)._vlc
+
+		const { repeat, loop } = await vlc.info()
+
+		if (loop) {
+			await vlc.command('pl_loop')
+		}
+
+		if (repeat) {
+			await vlc.command('pl_repeat')
+		}
+	})()
+
 	await audic.play()
 
 	SoundEvent.status = SoundEventStatus.Playing
 
-	audic.addEventListener('timeupdate', () => {
-		if (audic.currentTime === audic.duration - 1) {
-			SoundEvent.event.removeListener('volumeChange', OnVolumeChange)
-			SoundEvent.event.removeListener('statusChange', OnStatusChange)
+	audic.addEventListener('ended', () => {
+		audic.destroy()
 
-			audic.destroy()
+		SoundEvent.event.removeListener('volumeChange', OnVolumeChange)
+		SoundEvent.event.removeListener('statusChange', OnStatusChange)
 
-			if (sounds.length - 1 !== index) {
-				PlayPlaylist(index + 1)
-			}
+		if (sounds.length - 1 === index) {
+			console.log('end')
+		} else {
+			// Next
+			PlayPlaylist(index + 1)
 		}
 	})
 
