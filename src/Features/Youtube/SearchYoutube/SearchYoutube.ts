@@ -19,15 +19,7 @@ const SearchYoutube = async () => {
 		name: 'search',
 	})
 
-	// Disable ytsr error log
-	const prevConsoleError = console.error
-	console.error = () => {}
-	const searchResults = (await ytsr(search, { limit: 100 }).catch(() => {
-		// Error parsing shorts
-		// https://github.com/TimeForANinja/node-ytsr/issues/174
-		// https://github.com/TimeForANinja/node-ytsr/pull/178
-	})) as ytsr.Result
-	console.error = () => prevConsoleError
+	const searchResults = await ytsr(search, { limit: 100 })
 
 	const results = searchResults.items.reduce<IVideo[]>((acc, item) => {
 		if (item.type !== 'video') return acc
