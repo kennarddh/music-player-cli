@@ -16,6 +16,8 @@ import Play from './Features/Controls/Play.js'
 import Stop from './Features/Controls/Stop.js'
 import KeyboardEvents from './Features/Controls/KeyboardEvents.js'
 import ToggleMuted from './Features/Controls/ToggleMuted.js'
+import ToggleLooped from './Features/Controls/ToggleLooped.js'
+import Status from './Features/Status/Status.js'
 
 KeyboardEvents()
 
@@ -42,6 +44,8 @@ while (true) {
 			{ value: 'play', name: 'Play' },
 			{ value: 'stop', name: 'Stop' },
 			{ value: 'toggleMuted', name: 'Toggle Is Muted' },
+			{ value: 'toggleLooped', name: 'Toggle Is Looped' },
+			{ value: 'status', name: 'Show Status' },
 		],
 		loop: false,
 	})
@@ -110,6 +114,16 @@ while (true) {
 		}
 		case 'toggleMuted': {
 			ToggleMuted()
+
+			break
+		}
+		case 'toggleLooped': {
+			ToggleLooped()
+
+			break
+		}
+		case 'status': {
+			await Status()
 
 			break
 		}

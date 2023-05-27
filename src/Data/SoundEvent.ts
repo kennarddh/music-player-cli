@@ -2,6 +2,7 @@ import { EventEmitter } from 'events'
 
 interface EventEvents {
 	volumeChange: (volume: number) => void
+	loopChange: (isLooped: boolean) => void
 	statusChange: (status: SoundEventStatus) => void
 }
 
@@ -29,9 +30,9 @@ declare interface Event {
 class Event extends EventEmitter {}
 
 export enum SoundEventStatus {
-	Playing,
-	Paused,
-	Stopped,
+	Playing = 'Playing',
+	Paused = 'Paused',
+	Stopped = 'Stopped',
 }
 
 class SoundEvent {
@@ -39,6 +40,7 @@ class SoundEvent {
 	static status: SoundEventStatus = SoundEventStatus.Stopped
 	static volume: number = 1
 	static isMuted = false
+	static isLooped = false
 
 	static SetVolume(volume: number) {
 		this.volume = volume
@@ -64,6 +66,12 @@ class SoundEvent {
 
 			this.event.emit('volumeChange', 0)
 		}
+	}
+
+	static ToggleLooped() {
+		this.isLooped = !this.isLooped
+
+		this.event.emit('loopChange', this.isLooped)
 	}
 }
 

@@ -42,7 +42,12 @@ const PlayPlaylist = async (index = 0) => {
 		SoundEvent.event.removeListener('statusChange', OnStatusChange)
 
 		if (sounds.length - 1 === index) {
-			console.log('end')
+			if (SoundEvent.isLooped) {
+				// Restart
+				PlayPlaylist(0)
+			} else {
+				SoundEvent.SetStatus(SoundEventStatus.Stopped)
+			}
 		} else {
 			// Next
 			PlayPlaylist(index + 1)
