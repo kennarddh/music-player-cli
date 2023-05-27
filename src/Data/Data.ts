@@ -1,7 +1,7 @@
 import path from 'path'
 import { DirName } from '../Utils/Path.js'
 import FileSystem from './FileSystem.js'
-import { IData, IPlaylist, ISound } from './Types.js'
+import { IData, ISound } from './Types.js'
 import fs from 'fs/promises'
 import { ValueOrFactory } from '../Utils/Types.js'
 import { randomUUID } from 'crypto'
