@@ -19,11 +19,7 @@ const KeyboardEvents = () => {
 
 		const key = event.rawKey.name
 
-		if (key === MediaKeys.VolumeDecrease) {
-			SoundEvent.SetVolume(SoundEvent.volume + 5)
-		} else if (key === MediaKeys.VolumeDecrease) {
-			SoundEvent.SetVolume(SoundEvent.volume - 5)
-		} else if (key === MediaKeys.Mute) {
+		if (key === MediaKeys.Mute) {
 			SoundEvent.ToggleMuted()
 		} else if (key === MediaKeys.Stop) {
 			if (SoundEvent.status === SoundEventStatus.Stopped) return
