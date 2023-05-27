@@ -18,6 +18,7 @@ import KeyboardEvents from './Features/Controls/KeyboardEvents.js'
 import ToggleMuted from './Features/Controls/ToggleMuted.js'
 import ToggleLooped from './Features/Controls/ToggleLooped.js'
 import Status from './Features/Status/Status.js'
+import ExportPlaylistAsNamedMp3 from './Features/ImportExport/ExportPlaylistAsNamedMp3.js'
 
 KeyboardEvents()
 
@@ -46,6 +47,11 @@ while (true) {
 			{ value: 'toggleMuted', name: 'Toggle Is Muted' },
 			{ value: 'toggleLooped', name: 'Toggle Is Looped' },
 			{ value: 'status', name: 'Show Status' },
+			new inquirer.Separator(),
+			{
+				value: 'exportPlaylistAsNamedMp3',
+				name: 'Export Playlist As Named MP3',
+			},
 		],
 		loop: false,
 	})
@@ -124,6 +130,11 @@ while (true) {
 		}
 		case 'status': {
 			await Status()
+
+			break
+		}
+		case 'exportPlaylistAsNamedMp3': {
+			await ExportPlaylistAsNamedMp3()
 
 			break
 		}
