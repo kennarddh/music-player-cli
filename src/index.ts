@@ -41,7 +41,7 @@ while (true) {
 			{ value: 'pause', name: 'Pause' },
 			{ value: 'play', name: 'Play' },
 			{ value: 'stop', name: 'Stop' },
-			{ value: 'toggleMuted', name: 'Toggle is Muted' },
+			{ value: 'toggleMuted', name: 'Toggle Is Muted' },
 		],
 		loop: false,
 	})
