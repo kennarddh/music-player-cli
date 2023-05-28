@@ -16,20 +16,35 @@ import EscapeFileName from '../../Utils/EscapeFileName.js'
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
 const ExportPlaylistAsNamedMp3 = async () => {
-	const { outputDir, shouldGroupedByAuthor } = await inquirer.prompt([
-		{
-			type: 'confirm',
-			name: 'shouldGroupedByAuthor',
-			message: 'Should grouped by author?',
-		},
-		{
-			type: 'file-tree-selection',
-			name: 'outputDir',
-			message: 'Output directory to export',
-			onlyShowDir: true,
-			enableGoUpperDirectory: true,
-		},
-	])
+	const { outputDir, shouldGroupedByAuthor, audioBitRate } =
+		await inquirer.prompt([
+			{
+				type: 'confirm',
+				name: 'shouldGroupedByAuthor',
+				message: 'Should grouped by author?',
+			},
+			{
+				type: 'file-tree-selection',
+				name: 'outputDir',
+				message: 'Output directory to export',
+				onlyShowDir: true,
+				enableGoUpperDirectory: true,
+			},
+			{
+				type: 'list',
+				name: 'audioBitRate',
+				message: 'Select audio bitrate',
+				default: '96k',
+				choices: [
+					{ value: '64k', name: '64 Kilo Bit' },
+					{ value: '80k', name: '80 Kilo Bit' },
+					{ value: '96k', name: '96 Kilo Bit' },
+					{ value: '192k', name: '192 Kilo Bit' },
+					{ value: '256k', name: '256 Kilo Bit' },
+					{ value: '320k', name: '320 Kilo Bit' },
+				],
+			},
+		])
 
 	const { shouldProceed } = await inquirer.prompt({
 		type: 'confirm',
@@ -94,7 +109,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		)
 
 		await ExecPromise(
-			`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -b:a 192k ${EscapeShell(
+			`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast ${EscapeShell(
 				outputFile
 			)}.mp3`
 		)
