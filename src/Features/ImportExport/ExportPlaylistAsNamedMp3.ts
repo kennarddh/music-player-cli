@@ -48,7 +48,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 
 	const { shouldProceed } = await inquirer.prompt({
 		type: 'confirm',
-		message: `This will clear all content of ${outputDir}. Are you sure?`,
+		message: `This will clear all content in ${outputDir}. Are you sure?`,
 		name: 'shouldProceed',
 		default: false,
 	})
