@@ -17,6 +17,7 @@ import ora from 'ora'
 import { ISound } from '../../Data/Types.js'
 import Average from '../../Utils/Average.js'
 import Sum from '../../Utils/Sum.js'
+import ProperLockFile from 'proper-lockfile'
 
 interface IParsedSound extends ISound {
 	outputFile: string
@@ -156,7 +157,11 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		0
 	)
 
-	console.log(`Estimated output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`)
+	console.log(
+		`Estimated output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`
+	)
+
+	const releaseLock = await ProperLockFile.lock(outputDir)
 
 	const soundChunks = ChunkArray(parsedSounds, soundsPerChunk)
 
@@ -222,6 +227,8 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		)
 	}
 
+	await releaseLock()
+
 	const averageProcessingTime = Average(processingTimes)
 	const totalProcessingTime = Sum(processingTimes)
 
@@ -235,6 +242,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 			totalProcessingTime / 1000
 		).toFixed(2)}s`
 	)
+	console.log(`Actual output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`)
 }
 
 export default ExportPlaylistAsNamedMp3

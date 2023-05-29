@@ -22,6 +22,7 @@
 		"@types/ffprobe-static": "^2.0.1",
 		"@types/inquirer": "^9.0.3",
 		"@types/node": "^18.11.18",
+		"@types/proper-lockfile": "^4.1.2",
 		"rimraf": "^5.0.1",
 		"ts-node": "^10.9.1",
 		"typescript": "^5.0.4"
@@ -33,6 +34,7 @@
 		"inquirer-file-tree-selection-prompt": "^2.0.5",
 		"node-global-key-listener": "^0.1.1",
 		"ora": "^6.1.2",
+		"proper-lockfile": "^4.1.2",
 		"ytdl-core": "^4.11.2",
 		"ytpl": "^2.3.0",
 		"ytsr": "^3.8.0"
