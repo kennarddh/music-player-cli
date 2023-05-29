@@ -32,6 +32,7 @@
 		"ffmpeg-static": "^5.1.0",
 		"inquirer": "^9.1.4",
 		"inquirer-file-tree-selection-prompt": "^2.0.5",
+		"inquirer-press-to-continue": "^1.2.0",
 		"node-global-key-listener": "^0.1.1",
 		"ora": "^6.1.2",
 		"proper-lockfile": "^4.1.2",

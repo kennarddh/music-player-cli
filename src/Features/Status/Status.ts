@@ -1,6 +1,10 @@
 import inquirer from 'inquirer'
+import PressToContinuePrompt from 'inquirer-press-to-continue'
+
 import SoundEvent from '../../Data/SoundEvent.js'
 import Data from '../../Data/Data.js'
+
+inquirer.registerPrompt('press-to-continue', PressToContinuePrompt)
 
 const Status = async () => {
 	console.log(`Is muted: ${SoundEvent.isMuted}`)
@@ -9,23 +13,19 @@ const Status = async () => {
 	console.log(`Status: ${SoundEvent.status.toString()}`)
 
 	const playlistName = (await Data.CheckHaveSelectedPlaylist())
-		? (await Data.data)?.playlists?.[
+		? ((await Data.data)?.playlists?.[
 				(await Data.data).selectedPlaylist as string
-		  ]?.name as string
+		  ]?.name as string)
 		: 'None'
 
 	console.log(`Selected Playlist: ${playlistName}`)
 
-	while (true) {
-		const { done } = await inquirer.prompt({
-			type: 'confirm',
-			message: 'Done?',
-			name: 'done',
-			default: true,
-		})
-
-		if (done) break
-	}
+	await inquirer.prompt({
+		name: 'key',
+		type: 'press-to-continue',
+		enter: true,
+		pressToContinueMessage: 'Press enter to exit',
+	})
 }
 
 export default Status
