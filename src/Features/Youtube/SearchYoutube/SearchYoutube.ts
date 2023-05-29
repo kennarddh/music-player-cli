@@ -17,6 +17,11 @@ const SearchYoutube = async () => {
 		type: 'input',
 		message: 'Search keyword?',
 		name: 'search',
+		validate(input: string) {
+			if (input === '') return 'Keyword cannot be empty'
+
+			return true
+		},
 	})
 
 	const searchResults = await ytsr(search, { limit: 100 })
