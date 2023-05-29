@@ -6,12 +6,14 @@ import fs from 'fs/promises'
 import path from 'path'
 
 import FfmpegPath from 'ffmpeg-static'
+import FfProbe from 'ffprobe-static'
 
 import Data from '../../Data/Data.js'
 import SoundsData from '../../Data/SoundsData.js'
 import ExecPromise from '../../Utils/ExecPromise.js'
 import EscapeShell from '../../Utils/EscapeShell.js'
 import EscapeFileName from '../../Utils/EscapeFileName.js'
+import ora from 'ora'
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
@@ -108,10 +110,43 @@ const ExportPlaylistAsNamedMp3 = async () => {
 				: escapedTitle
 		)
 
+		const loaderTitle = shouldGroupedByAuthor
+			? `${escapedAuthor}/${escapedTitle}`
+			: escapedTitle
+
+		const loaderTitleDuplicate = isDuplicate
+			? `${loaderTitle} (${number})`
+			: loaderTitle
+
+		const loader = ora(`Exporting ${loaderTitleDuplicate}, 0s Elapsed`)
+
+		loader.start()
+
+		const start = performance.now()
+
+		const loaderInterval = setInterval(() => {
+			const now = performance.now()
+
+			loader.text = `Exporting ${loaderTitleDuplicate}, ${(
+				(now - start) /
+				1000
+			).toFixed(2)}s Elapsed`
+		}, 10)
+
 		await ExecPromise(
-			`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast ${EscapeShell(
+			`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -crf 27 -preset ultrafast ${EscapeShell(
 				outputFile
 			)}.mp3`
+		)
+
+		clearInterval(loaderInterval)
+
+		const now = performance.now()
+
+		loader.succeed(
+			`Exported ${loaderTitleDuplicate}, ${((now - start) / 1000).toFixed(
+				2
+			)}s Elapsed`
 		)
 	}
 }
