@@ -134,7 +134,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		}, 10)
 
 		await ExecPromise(
-			`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -crf 27 -preset ultrafast ${EscapeShell(
+			`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast ${EscapeShell(
 				outputFile
 			)}.mp3`
 		)
