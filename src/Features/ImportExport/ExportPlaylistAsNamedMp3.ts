@@ -11,8 +11,21 @@ import Data from '../../Data/Data.js'
 import SoundsData from '../../Data/SoundsData.js'
 import ExecPromise from '../../Utils/ExecPromise.js'
 import EscapeShell from '../../Utils/EscapeShell.js'
+import ChunkArray from '../../Utils/ChunkArray.js'
 import EscapeFileName from '../../Utils/EscapeFileName.js'
 import ora from 'ora'
+import { ISound } from '../../Data/Types.js'
+import Average from '../../Utils/Average.js'
+import Sum from '../../Utils/Sum.js'
+
+interface IParsedSound extends ISound {
+	outputFile: string
+	loaderTitleDuplicate: string
+	escaped: {
+		author: string
+		title: string
+	}
+}
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
@@ -68,9 +81,13 @@ const ExportPlaylistAsNamedMp3 = async () => {
 	const sameLookup: Record<string, number> = {}
 	const sameLookupWithGroup: Record<string, Record<string, number>> = {}
 
-	for (const sound of sounds) {
-		const inputPath = SoundsData.GetSoundPathFromId(sound.id)
+	const processingTimes: number[] = []
 
+	const soundsPerChunk = 2
+
+	const parsedSounds: IParsedSound[] = []
+
+	for (const sound of sounds) {
 		const escapedAuthor = EscapeFileName(sound.author)
 		const escapedTitle = EscapeFileName(sound.title)
 
@@ -119,7 +136,48 @@ const ExportPlaylistAsNamedMp3 = async () => {
 			? `${loaderTitle} (${number})`
 			: loaderTitle
 
-		const loader = ora(`Exporting ${loaderTitleDuplicate}, 0s Elapsed`)
+		parsedSounds.push({
+			...sound,
+			outputFile,
+			loaderTitleDuplicate,
+			escaped: {
+				author: escapedAuthor,
+				title: escapedTitle,
+			},
+		})
+	}
+
+	const estimatedSizeInMegaBytes = parsedSounds.reduce(
+		(acc, sound) =>
+			acc +
+			(sound.duration * parseInt(audioBitRate.slice(0, -1), 10)) /
+				8 /
+				1024,
+		0
+	)
+
+	console.log(`Estimated output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`)
+
+	const soundChunks = ChunkArray(parsedSounds, soundsPerChunk)
+
+	let currentChunk = 0
+
+	for (const chunk of soundChunks) {
+		currentChunk += 1
+
+		const loaderMessage = chunk
+			.map(sound =>
+				sound.loaderTitleDuplicate.substring(0, 20 / soundsPerChunk)
+			)
+			.join(', ')
+
+		const countMessage = `${currentChunk}/${
+			soundChunks.length + 1
+		} (${soundsPerChunk})`
+
+		const loader = ora(
+			`${countMessage} Exporting ${loaderMessage}, 0s Elapsed`
+		)
 
 		loader.start()
 
@@ -128,28 +186,55 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		const loaderInterval = setInterval(() => {
 			const now = performance.now()
 
-			loader.text = `Exporting ${loaderTitleDuplicate}, ${(
+			loader.text = `${countMessage} Exporting ${loaderMessage}, ${(
 				(now - start) /
 				1000
 			).toFixed(2)}s Elapsed`
 		}, 10)
 
-		await ExecPromise(
-			`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast ${EscapeShell(
-				outputFile
-			)}.mp3`
-		)
+		const promises: Promise<{ stdout: string; stderr: string }>[] = []
+
+		for (const sound of chunk) {
+			const inputPath = SoundsData.GetSoundPathFromId(sound.id)
+
+			promises.push(
+				ExecPromise(
+					`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast ${EscapeShell(
+						sound.outputFile
+					)}.mp3`
+				)
+			)
+		}
+
+		await Promise.all(promises)
 
 		clearInterval(loaderInterval)
 
 		const now = performance.now()
 
+		processingTimes.push(now - start)
+
 		loader.succeed(
-			`Exported ${loaderTitleDuplicate}, ${((now - start) / 1000).toFixed(
-				2
-			)}s Elapsed`
+			`${countMessage} Exported ${loaderMessage}, ${(
+				(now - start) /
+				1000
+			).toFixed(2)}s Elapsed`
 		)
 	}
+
+	const averageProcessingTime = Average(processingTimes)
+	const totalProcessingTime = Sum(processingTimes)
+
+	console.log(
+		`Average processing time per batch: ${(
+			averageProcessingTime / 1000
+		).toFixed(2)}s`
+	)
+	console.log(
+		`Total processing time per batch: ${(
+			totalProcessingTime / 1000
+		).toFixed(2)}s`
+	)
 }
 
 export default ExportPlaylistAsNamedMp3
