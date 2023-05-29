@@ -6,7 +6,6 @@ import fs from 'fs/promises'
 import path from 'path'
 
 import FfmpegPath from 'ffmpeg-static'
-import FfProbe from 'ffprobe-static'
 
 import Data from '../../Data/Data.js'
 import SoundsData from '../../Data/SoundsData.js'
