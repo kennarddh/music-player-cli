@@ -17,6 +17,8 @@ import ora from 'ora'
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
 const ExportPlaylistAsNamedMp3 = async () => {
+	if (!(await Data.CheckHaveSelectedPlaylist())) return
+
 	const { outputDir, shouldGroupedByAuthor, audioBitRate } =
 		await inquirer.prompt([
 			{
