@@ -18,6 +18,7 @@ import { ISound } from '../../Data/Types.js'
 import Average from '../../Utils/Average.js'
 import Sum from '../../Utils/Sum.js'
 import ProperLockFile from 'proper-lockfile'
+import GetDirectorySize from '../../Utils/GetDirectorySize.js'
 
 interface IParsedSound extends ISound {
 	outputFile: string
@@ -227,6 +228,9 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		)
 	}
 
+	const actualSizeInMegaBytes =
+		(await GetDirectorySize(outputDir)) / 1024 / 1024
+
 	await releaseLock()
 
 	const averageProcessingTime = Average(processingTimes)
@@ -242,7 +246,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 			totalProcessingTime / 1000
 		).toFixed(2)}s`
 	)
-	console.log(`Actual output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`)
+	console.log(`Actual output size: ${actualSizeInMegaBytes.toFixed(2)}MB`)
 }
 
 export default ExportPlaylistAsNamedMp3
