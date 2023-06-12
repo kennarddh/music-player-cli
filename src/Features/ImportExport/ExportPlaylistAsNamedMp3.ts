@@ -242,7 +242,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		).toFixed(2)}s`
 	)
 	console.log(
-		`Total processing time per batch: ${(
+		`Total processing time: ${(
 			totalProcessingTime / 1000
 		).toFixed(2)}s`
 	)
