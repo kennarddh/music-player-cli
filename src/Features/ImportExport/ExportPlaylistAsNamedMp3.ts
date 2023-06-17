@@ -19,6 +19,7 @@ import Average from '../../Utils/Average.js'
 import Sum from '../../Utils/Sum.js'
 import ProperLockFile from 'proper-lockfile'
 import GetDirectorySize from '../../Utils/GetDirectorySize.js'
+import ThumbnailsData from '../../Data/ThumbnailsData.js'
 
 interface IParsedSound extends ISound {
 	outputFile: string
@@ -30,6 +31,8 @@ interface IParsedSound extends ISound {
 }
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
+
+const thumbnailFileSizeAssumptionInKiloBytes = 50 * 1024 // 50 KB
 
 const ExportPlaylistAsNamedMp3 = async () => {
 	if (!(await Data.CheckHaveSelectedPlaylist())) return
@@ -149,14 +152,16 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		})
 	}
 
-	const estimatedSizeInMegaBytes = parsedSounds.reduce(
-		(acc, sound) =>
-			acc +
-			(sound.duration * parseInt(audioBitRate.slice(0, -1), 10)) /
-				8 /
-				1024,
-		0
-	)
+	const estimatedSizeInMegaBytes =
+		parsedSounds.reduce(
+			(acc, sound) =>
+				acc +
+				(sound.duration * parseInt(audioBitRate.slice(0, -1), 10)) /
+					8 /
+					1024,
+			0
+		) +
+		(thumbnailFileSizeAssumptionInKiloBytes * parsedSounds.length) / 1024
 
 	console.log(
 		`Estimated output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`
@@ -202,10 +207,13 @@ const ExportPlaylistAsNamedMp3 = async () => {
 
 		for (const sound of chunk) {
 			const inputPath = SoundsData.GetSoundPathFromId(sound.id)
+			const thumbnailPath = ThumbnailsData.GetThumbnailPathFromId(
+				sound.id
+			)
 
 			promises.push(
 				ExecPromise(
-					`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
+					`${FfmpegPath} -i ${inputPath} -i ${thumbnailPath} -map 0 -map 1 -ac 2 -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
 						sound.author
 					)} -metadata title=${EscapeShell(
 						sound.title
