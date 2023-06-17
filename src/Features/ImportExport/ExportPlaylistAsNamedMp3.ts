@@ -32,7 +32,7 @@ interface IParsedSound extends ISound {
 
 inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
-const thumbnailFileSizeAssumptionInKiloBytes = 50
+const thumbnailFileSizeAssumptionInKiloBytes = 750
 
 const ExportPlaylistAsNamedMp3 = async () => {
 	if (!(await Data.CheckHaveSelectedPlaylist())) return
@@ -253,6 +253,9 @@ const ExportPlaylistAsNamedMp3 = async () => {
 	)
 	console.log(
 		`Total processing time: ${(totalProcessingTime / 1000).toFixed(2)}s`
+	)
+	console.log(
+		`Estimated output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`
 	)
 	console.log(`Actual output size: ${actualSizeInMegaBytes.toFixed(2)}MB`)
 }
