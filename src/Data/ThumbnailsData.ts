@@ -33,14 +33,14 @@ class ThumbnailsData {
 		await fs.rm(thumbnailPath)
 	}
 
-	static GetSoundFileNameFromId(id: string) {
+	static GetThumbnailFileNameFromId(id: string) {
 		return `${id}.png`
 	}
 
 	static GetThumbnailPathFromId(id: string) {
 		return path.join(
 			this.thumbnailsSavePath,
-			this.GetSoundFileNameFromId(id)
+			this.GetThumbnailFileNameFromId(id)
 		)
 	}
 }
