@@ -205,9 +205,11 @@ const ExportPlaylistAsNamedMp3 = async () => {
 
 			promises.push(
 				ExecPromise(
-					`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast ${EscapeShell(
-						sound.outputFile
-					)}.mp3`
+					`${FfmpegPath} -i ${inputPath} -vn -ar 44100 -ac 2 -map a -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
+						sound.author
+					)} -metadata title=${EscapeShell(
+						sound.title
+					)} ${EscapeShell(sound.outputFile)}.mp3`
 				)
 			)
 		}
@@ -242,9 +244,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		).toFixed(2)}s`
 	)
 	console.log(
-		`Total processing time: ${(
-			totalProcessingTime / 1000
-		).toFixed(2)}s`
+		`Total processing time: ${(totalProcessingTime / 1000).toFixed(2)}s`
 	)
 	console.log(`Actual output size: ${actualSizeInMegaBytes.toFixed(2)}MB`)
 }
