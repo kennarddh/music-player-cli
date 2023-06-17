@@ -9,7 +9,7 @@ import SelectPlaylist from './Features/SelectPlaylist/SelectPlaylist.js'
 import ViewPlaylist from './Features/ViewPlaylist/ViewPlaylist.js'
 import DeleteSounds from './Features/DeleteSounds/DeleteSounds.js'
 import ImportFromYoutubePlaylist from './Features/Youtube/ImportFromYoutubePlaylist/ImportFromYoutubePlaylist.js'
-import PlayPlaylist from './Features/PlayPlaylist/PlayPlaylist.js'
+// import PlayPlaylist from './Features/PlayPlaylist/PlayPlaylist.js'
 import ChangeVolume from './Features/Controls/ChangeVolume.js'
 import Pause from './Features/Controls/Pause.js'
 import Play from './Features/Controls/Play.js'
@@ -94,7 +94,7 @@ while (true) {
 				break
 			}
 
-			await PlayPlaylist()
+			// await PlayPlaylist()
 
 			break
 		}
