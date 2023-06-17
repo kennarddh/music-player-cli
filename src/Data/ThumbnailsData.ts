@@ -1,8 +1,10 @@
 import path from 'path'
 import fs from 'fs/promises'
+import orignalFS from 'fs'
 import Data from './Data.js'
 import FileSystem from './FileSystem.js'
 import sharp from 'sharp'
+import IsFileExist from '../Utils/IsFileExist.js'
 
 class ThumbnailsData {
 	static thumbnailsSavePath = path.join(Data.saveDirPath, './Thumbnails/')
@@ -24,7 +26,11 @@ class ThumbnailsData {
 	static async Delete(id: string) {
 		await this.CreateDirectory()
 
-		await fs.rm(path.join(this.thumbnailsSavePath, `${id}.png`))
+		const thumbnailPath = path.join(this.thumbnailsSavePath, `${id}.png`)
+
+		if (!(await IsFileExist(thumbnailPath))) return
+
+		await fs.rm(thumbnailPath)
 	}
 
 	static GetSoundFileNameFromId(id: string) {
