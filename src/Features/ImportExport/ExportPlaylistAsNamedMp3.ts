@@ -213,7 +213,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 
 			promises.push(
 				ExecPromise(
-					`${FfmpegPath} -i ${inputPath} -i ${thumbnailPath} -map 0 -map 1 -ac 2 -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
+					`${FfmpegPath} -i ${inputPath} -i ${thumbnailPath} -id3v2_version 3 -map 0 -map 1 -ac 2 -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
 						sound.author
 					)} -metadata title=${EscapeShell(
 						sound.title
