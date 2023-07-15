@@ -37,7 +37,7 @@ const thumbnailFileSizeAssumptionInKiloBytes = 750
 const ExportPlaylistAsNamedMp3 = async () => {
 	if (!(await Data.CheckHaveSelectedPlaylist())) return
 
-	const { outputDir, shouldGroupedByAuthor, audioBitRate } =
+	const { outputDir, shouldGroupedByAuthor, audioBitRate, useThumbnail } =
 		await inquirer.prompt([
 			{
 				type: 'confirm',
@@ -64,6 +64,12 @@ const ExportPlaylistAsNamedMp3 = async () => {
 					{ value: '256k', name: '256 Kilo Bit' },
 					{ value: '320k', name: '320 Kilo Bit' },
 				],
+			},
+			{
+				type: 'confirm',
+				message: `Use thumbnail?`,
+				name: 'useThumbnail',
+				default: false,
 			},
 		])
 
@@ -152,16 +158,20 @@ const ExportPlaylistAsNamedMp3 = async () => {
 		})
 	}
 
-	const estimatedSizeInMegaBytes =
-		parsedSounds.reduce(
-			(acc, sound) =>
-				acc +
-				(sound.duration * parseInt(audioBitRate.slice(0, -1), 10)) /
-					8 /
-					1024,
-			0
-		) +
+	const audioBitRateInKiloBit = parseInt(audioBitRate.slice(0, -1), 10)
+	const audioBitRateInKiloBytes = audioBitRateInKiloBit / 8
+
+	const estimatedAudioSizeInMegaBytes =
+		(parsedSounds.reduce((acc, v) => acc + v.duration, 0) *
+			audioBitRateInKiloBytes) /
+		1024
+	const estimatedThumnailSizeInMegaBytes =
 		(thumbnailFileSizeAssumptionInKiloBytes * parsedSounds.length) / 1024
+
+	const estimatedSizeInMegaBytes =
+		estimatedAudioSizeInMegaBytes + useThumbnail
+			? estimatedAudioSizeInMegaBytes
+			: 0
 
 	console.log(
 		`Estimated output size: ${estimatedSizeInMegaBytes.toFixed(2)}MB`
@@ -213,7 +223,13 @@ const ExportPlaylistAsNamedMp3 = async () => {
 
 			promises.push(
 				ExecPromise(
-					`${FfmpegPath} -i ${inputPath} -i ${thumbnailPath} -id3v2_version 3 -metadata:s:v title="Album cover" -metadata:s:v comment="Cover (Front)" -map 0 -map 1 -ac 2 -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
+					`${FfmpegPath} -i ${inputPath}${
+						useThumbnail
+							? ` -i ${thumbnailPath} -id3v2_version 3 -metadata:s:v title="Album cover" -metadata:s:v comment="Cover (Front)"`
+							: ''
+					} -map 0${
+						useThumbnail ? ` -map 1` : ''
+					} -ac 2 -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
 						sound.author
 					)} -metadata title=${EscapeShell(
 						sound.title
