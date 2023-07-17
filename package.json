@@ -21,7 +21,7 @@
 	"devDependencies": {
 		"@types/ffprobe-static": "^2.0.1",
 		"@types/inquirer": "^9.0.3",
-		"@types/node": "^20.4.1",
+		"@types/node": "^20.4.2",
 		"@types/proper-lockfile": "^4.1.2",
 		"rimraf": "^5.0.1",
 		"ts-node": "^10.9.1",
