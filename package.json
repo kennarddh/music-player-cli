@@ -33,7 +33,7 @@
 		"inquirer-file-tree-selection-prompt": "^2.0.5",
 		"inquirer-press-to-continue": "^1.2.0",
 		"node-global-key-listener": "^0.1.1",
-		"ora": "^6.1.2",
+		"ora": "^7.0.0",
 		"proper-lockfile": "^4.1.2",
 		"sharp": "^0.32.1",
 		"ytdl-core": "^4.11.2",
