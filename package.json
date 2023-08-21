@@ -35,7 +35,7 @@
 		"node-global-key-listener": "^0.1.1",
 		"ora": "^6.1.2",
 		"proper-lockfile": "^4.1.2",
-		"sharp": "^0.32.1",
+		"sharp": "^0.32.5",
 		"ytdl-core": "^4.11.2",
 		"ytpl": "^2.3.0",
 		"ytsr": "^3.8.0"
