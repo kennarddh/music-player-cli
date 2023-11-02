@@ -170,7 +170,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 
 	const estimatedSizeInMegaBytes =
 		estimatedAudioSizeInMegaBytes + useThumbnail
-			? estimatedAudioSizeInMegaBytes
+			? estimatedThumnailSizeInMegaBytes
 			: 0
 
 	console.log(
