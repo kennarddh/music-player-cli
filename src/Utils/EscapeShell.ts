@@ -1,5 +1,5 @@
 const EscapeShell = (raw: string) => {
-	return `"${raw.replaceAll('"', '\\"')}"`
+	return `"${raw.replaceAll('"', "'")}"`
 }
 
 export default EscapeShell

@@ -1,5 +1,4 @@
 import inquirer from 'inquirer'
-import ytpl from 'ytpl'
 import { randomUUID } from 'crypto'
 
 import AddFromYoutube from '../AddFromYoutube.js'
@@ -8,6 +7,69 @@ import { IVideo } from '../../Types.js'
 import DurationToSeconds from '../../../Utils/DurationToSeconds.js'
 import ShowVideosCheckbox from '../../../Utils/ShowVideosCheckbox.js'
 import Wait from '../../../Utils/Wait.js'
+import ora from 'ora'
+import ThumbnailsData from '../../../Data/ThumbnailsData.js'
+import SoundsData from '../../../Data/SoundsData.js'
+
+interface IVideoExtended extends IVideo {
+	thumbailURL: string | null
+}
+
+export interface YouTubePlaylistResponse {
+	kind: string
+	etag: string
+	items: YouTubePlaylistItem[]
+	nextPageToken?: string
+	prevPageToken?: string
+	pageInfo: PageInfo
+}
+
+export interface PageInfo {
+	totalResults: number
+	resultsPerPage: number
+}
+
+export interface YouTubePlaylistItem {
+	kind: string
+	etag: string
+	id: string
+	snippet: PlaylistItemSnippet
+}
+
+export interface PlaylistItemSnippet {
+	publishedAt: string
+	channelId: string
+	title: string
+	description: string
+	thumbnails: Thumbnails
+	channelTitle: string
+	playlistId: string
+	position: number
+	resourceId: ResourceId
+	videoOwnerChannelTitle: string
+	videoOwnerChannelId: string
+}
+
+export interface Thumbnails {
+	default: ThumbnailDetails
+	medium: ThumbnailDetails
+	high: ThumbnailDetails
+	// standard and maxres are technically optional in the YouTube API
+	// depending on video resolution, though present in your JSON.
+	standard?: ThumbnailDetails
+	maxres?: ThumbnailDetails
+}
+
+export interface ThumbnailDetails {
+	url: string
+	width: number
+	height: number
+}
+
+export interface ResourceId {
+	kind: string
+	videoId: string
+}
 
 const ImportFromYoutubePlaylist = async () => {
 	if (!(await Data.CheckHaveSelectedPlaylist())) return
@@ -18,48 +80,116 @@ const ImportFromYoutubePlaylist = async () => {
 		name: 'playlistId',
 	})
 
-	if (!ytpl.validateID(playlistId)) {
-		console.log('Invalid playlist id')
+	const loader = ora(`Fetching videos from playlist`)
 
-		return
+	loader.start()
+
+	const playlistItems = []
+
+	let pageToken: string | null = ''
+
+	while (pageToken !== null) {
+		try {
+			const fetchRes = await fetch(
+				`https://www.googleapis.com/youtube/v3/playlistItems?key=${process.env.YOUTUBE_API_KEY}&playlistId=${playlistId}&part=snippet&maxResults=50&pageToken=${pageToken}`
+			)
+
+			if (!fetchRes.ok) {
+				console.error(`HTTP error! status: ${fetchRes.status}`)
+
+				return
+			}
+
+			const data = (await fetchRes.json()) as YouTubePlaylistResponse
+
+			playlistItems.push(...data.items)
+
+			pageToken = data.nextPageToken ?? null
+		} catch (error) {
+			console.log(error)
+			loader.fail(`Error fetching playlist`)
+
+			return
+		}
 	}
 
-	const getResults = await ytpl(playlistId, { limit: Infinity })
+	loader.succeed(`Fetched ${playlistItems.length} videos from playlist`)
 
-	const results = getResults.items.reduce<IVideo[]>((acc, item) => {
-		if (item.isLive) return acc
-
+	const results = playlistItems.reduce<IVideoExtended[]>((acc, item) => {
 		acc.push({
-			title: item.title,
-			id: item.id,
-			author: item.author?.name ?? 'Unknown',
-			duration: item.duration ?? 'Unknown',
+			title: item.snippet.title,
+			id: item.snippet.resourceId.videoId,
+			author: item.snippet.videoOwnerChannelTitle ?? 'Unknown',
+			duration: 'Unknown',
 			uploadedAt: '',
+			thumbailURL:
+				(item.snippet.thumbnails.maxres?.url ||
+					item.snippet.thumbnails.high?.url ||
+					item.snippet.thumbnails.medium?.url ||
+					item.snippet.thumbnails.default?.url) ??
+				null,
 		})
 
 		return acc
 	}, [])
 
 	const selected = await ShowVideosCheckbox(results)
+	const sounds = await Data.GetCurrentPlaylistSounds()
 
 	for (const videoId of selected) {
 		const id = randomUUID()
 
 		const videoData = results.find(
 			({ id: iterId }) => iterId === videoId
-		) as IVideo
+		) as IVideoExtended
 
-		await AddFromYoutube(id, videoId, videoData.title as string)
+		if (sounds.find(sound => sound.title === videoData.title)) {
+			console.log(
+				`Skipped ${videoData.title} from playlist import as it is already in the playlist`
+			)
 
-		await Data.NewSound({
-			author: videoData.author,
-			duration: DurationToSeconds(videoData.duration),
-			id,
-			title: videoData.title,
-			addedAt: new Date().getTime(),
-		})
+			continue
+		}
 
-		await Wait(2000)
+		if (videoData.thumbailURL !== null) {
+			const thumbailResponse = await fetch(videoData.thumbailURL)
+
+			if (thumbailResponse.ok) {
+				const thumbnailArrayBuffer =
+					await thumbailResponse.arrayBuffer()
+
+				const thumbnailBuffer = Buffer.from(thumbnailArrayBuffer)
+
+				ThumbnailsData.Add(id, thumbnailBuffer)
+			} else {
+				console.error(
+					`Failed to fetch thumbail ${videoData.title} ${videoData.thumbailURL}`
+				)
+
+				console.error(thumbailResponse)
+			}
+		}
+
+		try {
+			await AddFromYoutube(id, videoId, videoData.title as string)
+
+			await Data.NewSound({
+				author: videoData.author,
+				duration: DurationToSeconds(videoData.duration),
+				id,
+				title: videoData.title,
+				addedAt: new Date().getTime(),
+			})
+
+			console.log(`Imported ${videoData.title} from playlist`)
+		} catch (error) {
+			console.error(`Failed to import "${videoData.id}" ${videoData.title} from playlist`)
+			console.error(error)
+		}
+
+		console.log('Waiting for 25 seconds to avoid YouTube rate limiting')
+
+		await Wait(25000)
 	}
 }
 

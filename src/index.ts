@@ -19,6 +19,8 @@ import ToggleMuted from './Features/Controls/ToggleMuted.js'
 import ToggleLooped from './Features/Controls/ToggleLooped.js'
 import Status from './Features/Status/Status.js'
 import ExportPlaylistAsNamedMp3 from './Features/ImportExport/ExportPlaylistAsNamedMp3.js'
+import PruneOutdated from './Features/PruneOutdated.js'
+import VerifyData from './Features/VerifyData.js'
 
 KeyboardEvents()
 
@@ -51,6 +53,14 @@ while (true) {
 			{
 				value: 'exportPlaylistAsNamedMp3',
 				name: 'Export Playlist As Named MP3',
+			},
+			{
+				value: 'pruneOutdated',
+				name: 'Prune Outdated Data Files',
+			},
+			{
+				value: 'verifyData',
+				name: 'Verify Data Integrity',
 			},
 		],
 		loop: false,
@@ -135,6 +145,16 @@ while (true) {
 		}
 		case 'exportPlaylistAsNamedMp3': {
 			await ExportPlaylistAsNamedMp3()
+
+			break
+		}
+		case 'pruneOutdated': {
+			await PruneOutdated()
+
+			break
+		}
+		case 'verifyData': {
+			await VerifyData()
 
 			break
 		}

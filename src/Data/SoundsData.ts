@@ -4,6 +4,7 @@ import { Stream } from 'stream'
 import fs from 'fs/promises'
 import Data from './Data.js'
 import FileSystem from './FileSystem.js'
+import { pipeline } from 'node:stream/promises'
 
 class SoundsData {
 	static soundsSavePath = path.join(Data.saveDirPath, './Sounds/')
@@ -14,26 +15,27 @@ class SoundsData {
 		)
 	}
 
-	static async Add(id: string, stream: Stream) {
+	static async Add(
+		id: string,
+		stream: ReadableStream<Uint8Array<ArrayBufferLike>>
+	) {
 		await this.CreateDirectory()
 
 		const writeStream = createWriteStream(
-			path.join(this.soundsSavePath, `${id}.mpeg`)
+			path.join(this.soundsSavePath, `${id}.m4a`)
 		)
 
-		stream.pipe(writeStream)
-
-		return writeStream
+		await pipeline(stream, writeStream)
 	}
 
 	static async Delete(id: string) {
 		await this.CreateDirectory()
 
-		await fs.rm(path.join(this.soundsSavePath, `${id}.mpeg`))
+		await fs.rm(path.join(this.soundsSavePath, `${id}.m4a`))
 	}
 
 	static GetSoundFileNameFromId(id: string) {
-		return `${id}.mpeg`
+		return `${id}.m4a`
 	}
 
 	static GetSoundPathFromId(id: string) {

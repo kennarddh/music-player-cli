@@ -94,7 +94,7 @@ const ExportPlaylistAsNamedMp3 = async () => {
 
 	const processingTimes: number[] = []
 
-	const soundsPerChunk = 2
+	const soundsPerChunk = 4
 
 	const parsedSounds: IParsedSound[] = []
 
@@ -221,19 +221,47 @@ const ExportPlaylistAsNamedMp3 = async () => {
 				sound.id
 			)
 
+			try {
+				await fs.access(inputPath, fs.constants.F_OK)
+			} catch {
+				console.warn(
+					`Sound file for ${sound.title} does not exist at ${inputPath}, skipping export.`
+				)
+
+				continue
+			}
+
+			let thumbnailFileExists = false
+
+			try {
+				await fs.access(thumbnailPath, fs.constants.F_OK)
+
+				thumbnailFileExists = true
+			} catch {
+				thumbnailFileExists = false
+
+				console.warn(
+					`Thumbnail file for ${sound.title} does not exist at ${thumbnailPath}, skipping thumbnail embedding.`
+				)
+			}
+
 			promises.push(
 				ExecPromise(
-					`${FfmpegPath} -i ${inputPath}${
-						useThumbnail
-							? ` -i ${thumbnailPath} -id3v2_version 3 -metadata:s:v title="Album cover" -metadata:s:v comment="Cover (Front)"`
+					`${FfmpegPath} -i ${EscapeShell(inputPath)}${
+						useThumbnail && thumbnailFileExists
+							? ` -i ${EscapeShell(
+									thumbnailPath
+							  )} -id3v2_version 3 -metadata:s:v title="Album cover" -metadata:s:v comment="Cover (Front)"`
 							: ''
-					} -map 0${
-						useThumbnail ? ` -map 1` : ''
-					} -ac 2 -b:a ${audioBitRate} -preset ultrafast -metadata artist=${EscapeShell(
+					} -map 0:a${
+						useThumbnail && thumbnailFileExists
+							? ` -map 1 -c:v copy `
+							: ''
+					} -ac 2 -b:a ${audioBitRate} -metadata artist=${EscapeShell(
 						sound.author
 					)} -metadata title=${EscapeShell(
 						sound.title
-					)} ${EscapeShell(sound.outputFile)}.mp3`
+					)} ${EscapeShell(`${sound.outputFile}.mp3`)}`
 				)
 			)
 		}
