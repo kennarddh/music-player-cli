@@ -136,7 +136,7 @@ const ImportFromYoutubePlaylist = async () => {
 	const selected = await ShowVideosCheckbox(results)
 	const sounds = await Data.GetCurrentPlaylistSounds()
 
-	let i = 0
+	let i = 1
 
 	for (const videoId of selected) {
 		const id = randomUUID()
@@ -147,7 +147,7 @@ const ImportFromYoutubePlaylist = async () => {
 
 		if (sounds.find(sound => sound.title === videoData.title)) {
 			console.log(
-				`Skipped ${videoData.title} from playlist import as it is already in the playlist`
+				`${i}/${selected.length}: Skipped ${videoData.title} from playlist import as it is already in the playlist`
 			)
 
 			continue
@@ -165,7 +165,7 @@ const ImportFromYoutubePlaylist = async () => {
 				ThumbnailsData.Add(id, thumbnailBuffer)
 			} else {
 				console.error(
-					`Failed to fetch thumbail ${videoData.title} ${videoData.thumbailURL}`
+					`${i}/${selected.length}: Failed to fetch thumbail ${videoData.title} ${videoData.thumbailURL}`
 				)
 
 				console.error(thumbailResponse)
@@ -183,11 +183,14 @@ const ImportFromYoutubePlaylist = async () => {
 				addedAt: new Date().getTime(),
 			})
 
-			console.log(`Imported ${videoData.title} from playlist`)
+			console.log(
+				`${i}/${selected.length}: Imported ${videoData.title} from playlist`
+			)
 		} catch (error) {
 			console.error(
-				`Failed to import "${videoData.id}" ${videoData.title} from playlist`
+				`${i}/${selected.length}: Failed to import "${videoData.id}" ${videoData.title} from playlist`
 			)
+
 			console.error(error)
 		}
 
