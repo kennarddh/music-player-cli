@@ -1,6 +1,6 @@
 const EscapeFileName = (raw: string) =>
 	raw
-		.replace(/[<>:"\/\\|?]*/g, '')
+		.replace(/[<>:"\/\\|?\*]*/g, '')
 		.replace(/\s/g, ' ')
 		.trim()
 
