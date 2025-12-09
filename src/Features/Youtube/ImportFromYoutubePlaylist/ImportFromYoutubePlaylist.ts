@@ -138,6 +138,11 @@ const ImportFromYoutubePlaylist = async () => {
 
 	let i = 1
 
+	let totalSkipped = 0
+	let totalThumbnailError = 0
+	let totalAudioError = 0
+	let totalSuccess = 0
+
 	for (const videoId of selected) {
 		const id = randomUUID()
 
@@ -149,6 +154,10 @@ const ImportFromYoutubePlaylist = async () => {
 			console.log(
 				`${i}/${selected.length}: Skipped ${videoData.title} from playlist import as it is already in the playlist`
 			)
+
+			totalSkipped++
+
+			i++
 
 			continue
 		}
@@ -169,6 +178,8 @@ const ImportFromYoutubePlaylist = async () => {
 				)
 
 				console.error(thumbailResponse)
+
+				totalThumbnailError++
 			}
 		}
 
@@ -186,12 +197,16 @@ const ImportFromYoutubePlaylist = async () => {
 			console.log(
 				`${i}/${selected.length}: Imported ${videoData.title} from playlist`
 			)
+
+			totalSuccess++
 		} catch (error) {
 			console.error(
 				`${i}/${selected.length}: Failed to import "${videoData.id}" ${videoData.title} from playlist`
 			)
 
 			console.error(error)
+
+			totalAudioError++
 		}
 
 		console.log('Waiting for 25 seconds to avoid YouTube rate limiting')
@@ -208,6 +223,12 @@ const ImportFromYoutubePlaylist = async () => {
 
 		i++
 	}
+
+	console.log('Playlist import complete!')
+	console.log(`Total imported: ${totalSuccess}`)
+	console.log(`Total skipped: ${totalSkipped}`)
+	console.log(`Total thumbnail errors: ${totalThumbnailError}`)
+	console.log(`Total audio errors: ${totalAudioError}`)
 }
 
 export default ImportFromYoutubePlaylist
