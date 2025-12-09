@@ -136,6 +136,8 @@ const ImportFromYoutubePlaylist = async () => {
 	const selected = await ShowVideosCheckbox(results)
 	const sounds = await Data.GetCurrentPlaylistSounds()
 
+	let i = 0
+
 	for (const videoId of selected) {
 		const id = randomUUID()
 
@@ -183,13 +185,25 @@ const ImportFromYoutubePlaylist = async () => {
 
 			console.log(`Imported ${videoData.title} from playlist`)
 		} catch (error) {
-			console.error(`Failed to import "${videoData.id}" ${videoData.title} from playlist`)
+			console.error(
+				`Failed to import "${videoData.id}" ${videoData.title} from playlist`
+			)
 			console.error(error)
 		}
 
 		console.log('Waiting for 25 seconds to avoid YouTube rate limiting')
 
 		await Wait(25000)
+
+		if (i % 40 === 0) {
+			console.log(
+				'Waiting for 15 minutes extra to avoid YouTube rate limiting'
+			)
+
+			await Wait(15 * 60 * 1000)
+		}
+
+		i++
 	}
 }
 
