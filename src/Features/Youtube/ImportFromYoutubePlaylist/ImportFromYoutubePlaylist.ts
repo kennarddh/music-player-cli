@@ -163,21 +163,31 @@ const ImportFromYoutubePlaylist = async () => {
 		}
 
 		if (videoData.thumbailURL !== null) {
-			const thumbailResponse = await fetch(videoData.thumbailURL)
+			try {
+				const thumbailResponse = await fetch(videoData.thumbailURL)
 
-			if (thumbailResponse.ok) {
-				const thumbnailArrayBuffer =
-					await thumbailResponse.arrayBuffer()
+				if (thumbailResponse.ok) {
+					const thumbnailArrayBuffer =
+						await thumbailResponse.arrayBuffer()
 
-				const thumbnailBuffer = Buffer.from(thumbnailArrayBuffer)
+					const thumbnailBuffer = Buffer.from(thumbnailArrayBuffer)
 
-				ThumbnailsData.Add(id, thumbnailBuffer)
-			} else {
+					ThumbnailsData.Add(id, thumbnailBuffer)
+				} else {
+					console.error(
+						`${i}/${selected.length}: Failed to fetch thumbail ${videoData.title} ${videoData.thumbailURL}, response not ok`
+					)
+
+					console.error(thumbailResponse)
+
+					totalThumbnailError++
+				}
+			} catch (error) {
 				console.error(
 					`${i}/${selected.length}: Failed to fetch thumbail ${videoData.title} ${videoData.thumbailURL}`
 				)
 
-				console.error(thumbailResponse)
+				console.error(error)
 
 				totalThumbnailError++
 			}
@@ -209,16 +219,16 @@ const ImportFromYoutubePlaylist = async () => {
 			totalAudioError++
 		}
 
-		console.log('Waiting for 25 seconds to avoid YouTube rate limiting')
-
-		await Wait(25000)
-
 		if (i % 40 === 0) {
 			console.log(
 				'Waiting for 15 minutes extra to avoid YouTube rate limiting'
 			)
 
 			await Wait(15 * 60 * 1000)
+		} else {
+			console.log('Waiting for 25 seconds to avoid YouTube rate limiting')
+
+			await Wait(25000)
 		}
 
 		i++
